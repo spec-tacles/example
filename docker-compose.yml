@@ -1,0 +1,23 @@
+version: '3'
+services:
+  redis:
+    image: redis
+  proxy:
+    image: spectacles/proxy
+    environment:
+      REDIS_URL: redis:6379
+    restart: on-failure
+  gateway:
+    image: spectacles/gateway
+    environment:
+      DISCORD_EVENTS: MESSAGE_CREATE
+      DISCORD_INTENTS: GUILD_MESSAGES,MESSAGE_CONTENT
+      REDIS_URL: redis:6379
+      BROKER_TYPE: redis
+    env_file: .env
+    restart: on-failure
+  bot:
+    build: ./bot
+    environment:
+      REDIS_URL: redis
+    env_file: .env
